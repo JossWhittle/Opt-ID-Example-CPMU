@@ -16,33 +16,17 @@
 import numpy as np
 import optid
 
-x_size    = 50.012
-z_size    = 30.012
-hh_s_size = 5.220
-he_s_size = 3.100
-ht_s_size = 1.149
-
-hh_magnet_set = optid.magnets.MagnetSet.from_sim_file(
-    mtype='HH', file='sim/I24H.sim',
-    reference_size=np.array((x_size, z_size, hh_s_size), dtype=np.float32),
-    reference_field_vector=optid.constants.VECTOR_S,
-    flip_matrix=optid.constants.MATRIX_ROTS_180)
-
-he_magnet_set = optid.magnets.MagnetSet.from_sim_file(
-    mtype='HE', file='sim/I24HEC.sim',
-    reference_size=np.array((x_size, z_size, he_s_size), dtype=np.float32),
-    reference_field_vector=optid.constants.VECTOR_S,
-    flip_matrix=optid.constants.MATRIX_ROTS_180)
-
-ht_magnet_set = optid.magnets.MagnetSet.from_sim_file(
-    mtype='HT', file='sim/I24HTE.sim',
-    reference_size=np.array((x_size, z_size, ht_s_size), dtype=np.float32),
-    reference_field_vector=optid.constants.VECTOR_S,
-    flip_matrix=optid.constants.MATRIX_ROTS_180)
+x_size  = 50.012
+z_size  = 30.012
+hh_size = np.array((x_size, z_size, 5.220), dtype=np.float32)
+he_size = np.array((x_size, z_size, 3.100), dtype=np.float32)
+ht_size = np.array((x_size, z_size, 1.149), dtype=np.float32)
 
 device = optid.devices.hybrid_symmetric.HybridSymmetricDeviceSpec(
     name='I24-CPMU', periods=100, interstice=0.1, pole_size=4.0, terminal_size=5.0,
-    hh=hh_magnet_set, he=he_magnet_set, ht=ht_magnet_set)
+    hh=optid.devices.hybrid_symmetric.MagnetSetHH_from_sim_file(file='sim/I24H.sim',   reference_size=hh_size),
+    he=optid.devices.hybrid_symmetric.MagnetSetHE_from_sim_file(file='sim/I24HEC.sim', reference_size=he_size),
+    ht=optid.devices.hybrid_symmetric.MagnetSetHT_from_sim_file(file='sim/I24HTE.sim', reference_size=ht_size))
 
 device.compile(gap=2)
 
