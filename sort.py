@@ -13,20 +13,14 @@
 # language governing permissions and limitations under the License.
 
 
-import numpy as np
 import optid
 
-x_size  = 50.0
-z_size  = 30.0
-hh_size = np.array((x_size, z_size, 5.77), dtype=np.float32)
-he_size = np.array((x_size, z_size, 3.48), dtype=np.float32)
-ht_size = np.array((x_size, z_size, 1.14), dtype=np.float32)
 
 device = optid.devices.hybrid_symmetric.HybridSymmetricDeviceSpec(
     name='I14-CPMU', periods=113, interstice=0.0625, pole_size=2.95, terminal_size=3.0,
-    hh=optid.devices.hybrid_symmetric.MagnetSetHH_from_sim_file(file='sim/HH.sim',  reference_size=hh_size),
-    he=optid.devices.hybrid_symmetric.MagnetSetHE_from_sim_file(file='sim/HEC.sim', reference_size=he_size),
-    ht=optid.devices.hybrid_symmetric.MagnetSetHT_from_sim_file(file='sim/HTD.sim', reference_size=ht_size))
+    hh=optid.devices.hybrid_symmetric.MagnetSetHH_from_sim_file(file='sim/HH.sim',  size=(50.0, 30.0, 5.77)),
+    he=optid.devices.hybrid_symmetric.MagnetSetHE_from_sim_file(file='sim/HEC.sim', size=(50.0, 30.0, 3.48)),
+    ht=optid.devices.hybrid_symmetric.MagnetSetHT_from_sim_file(file='sim/HTD.sim', size=(50.0, 30.0, 1.14)))
 
 device.compile(gap=5.6)
 
