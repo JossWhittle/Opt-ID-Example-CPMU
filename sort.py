@@ -13,7 +13,9 @@
 # language governing permissions and limitations under the License.
 
 
+import logging
 import optid
+optid.utils.logging.attach_console_logger(log_level=logging.INFO)
 
 
 device = optid.devices.hybrid_symmetric.HybridSymmetricDeviceSpec(
@@ -24,5 +26,5 @@ device = optid.devices.hybrid_symmetric.HybridSymmetricDeviceSpec(
 
 device.compile(gap=5.6)
 
-print(device.mtype_counts)
-print(device.period_length)
+print(device.mtype_counts)   # {'HH': 452, 'HE': 4, 'HT': 4}
+print(device.period_length)  # 17.69 mm
