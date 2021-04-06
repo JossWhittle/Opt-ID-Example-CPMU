@@ -12,19 +12,35 @@
 # either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 
-
 import logging
 import optid
+from optid.constants import VECTOR_S, MATRIX_ROTS_180
+from optid.geometry import ChamferedCuboid, Cuboid
+from optid.device   import HybridDevice, Magnet, Pole
+
 optid.utils.logging.attach_console_logger(log_level=logging.INFO)
 
+tetgen_kargs = dict(subdiv=0, nobisect=True)
 
-device = optid.devices.hybrid_symmetric.HybridSymmetricDeviceSpec(
-    name='I14-CPMU', periods=113, interstice=0.0625, pole_size=2.95, terminal_size=3.0,
-    hh=optid.devices.hybrid_symmetric.MagnetSetHH_from_sim_file(file='sim/HH.sim',  size=(50.0, 30.0, 5.77)),
-    he=optid.devices.hybrid_symmetric.MagnetSetHE_from_sim_file(file='sim/HEC.sim', size=(50.0, 30.0, 3.48)),
-    ht=optid.devices.hybrid_symmetric.MagnetSetHT_from_sim_file(file='sim/HTD.sim', size=(50.0, 30.0, 1.14)))
+device = HybridDevice(name='I14-CPMU', nperiod=32, symmetric=True,
 
-device.compile(gap=5.6)
+                      hh=Magnet(name='HH', candidates='sim/HH.csv',  vector=VECTOR_S, flip_matrices=[MATRIX_ROTS_180],
+                                geometry=ChamferedCuboid(shape=(50.0, 30.0, 5.77), chamfer=5, **tetgen_kargs)),
+                
+                      he=Magnet(name='HE', candidates='sim/HEC.csv', vector=VECTOR_S, flip_matrices=[MATRIX_ROTS_180],
+                                geometry=ChamferedCuboid(shape=(50.0, 30.0, 3.48), chamfer=5, **tetgen_kargs)),
+                
+                      ht=Magnet(name='HT', candidates='sim/HTE.csv', vector=VECTOR_S, flip_matrices=[MATRIX_ROTS_180],
+                                geometry=ChamferedCuboid(shape=(50.0, 30.0, 1.14), chamfer=5, **tetgen_kargs)),
 
-print(device.mtype_counts)   # {'HH': 452, 'HE': 4, 'HT': 4}
-print(device.period_length)  # 17.69 mm
+                      pp=Pole(name='PP', geometry=Cuboid(shape=(20.0, 20.0, 2.95), **tetgen_kargs)),
+
+                      pt=Pole(name='PT', geometry=Cuboid(shape=(20.0, 20.0, 5.00), **tetgen_kargs)))
+
+print('nperiod', device.nperiod)
+print('period_length', device.period_length)
+print('ncandidate', device.ncandidate)
+print('ncandidate_by_type', device.ncandidate_by_type)
+print('nslot', device.nslot)
+print('nslot_by_type', device.nslot_by_type)
+print('magnets_by_type', device.magnets_by_type)
